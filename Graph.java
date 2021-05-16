@@ -1,98 +1,124 @@
 
 package Graph_Resources;
-import java.util.*;
-public class Graph<T> {
-	 public Map<T, LinkedList<T>> map = new HashMap<>();
-	 /**
-	  * Add vertex 
-	  * @param v
-	  */
-	 public void addVertex(T v) {
-		 map.put(v, new LinkedList<T>());
-	 }
-	 /**
-	  * Add edge
-	  * @param source
-	  * @param destination
-	  * @param bidirectional
-	  */
-	 public void addEdge(T source,T destination,boolean bidirectional) {
-		 if (!map.containsKey(source)) {
-			 addVertex(source);
-		 }
-		 if (!map.containsKey(destination)) {
-			 addVertex(destination);
-		 }
-		 map.get(source).add(destination);
-		 if (bidirectional == true) {
-	            map.get(destination).add(source);
-	        }
-	           
-	 }
-	 /**
-	  * Get count of vertices 
-	  */
-	 public int getVertexCount() {
-	        System.out.println("The graph has "+ map.keySet().size()+ " vertices");
-	        return map.keySet().size();
-	 }
-	 /**
-	  * 
-	  * @param bidirection 
-	  */
-	 public int getEdgesCount(boolean bidirection)
-	    {
-	        int count = 0;
-	        for (T v : map.keySet()) {
-	            count += map.get(v).size();
-	        }
-	        if (bidirection == true) {
-	            count = count / 2;
-	        }
-	        System.out.println("The graph has "+ count+ " edges.");
-	        return count;
-	    }
-	 /**
-	  * 
-	  * @param v
-	  */
-	 public boolean hasVertex(T v)
-	    {
-	        if (map.containsKey(v)) {
-	            System.out.println("The graph contains "+ v + " as a vertex.");
-	            return true;
-	        }
-	        else {
-	            System.out.println("The graph does not contain "+ v + " as a vertex.");
-	        }
-	        return false;
-	    }
-	 public boolean hasEdge(T v1, T v2)
-	    {
-	        if (map.get(v1).contains(v2)) {
-	            System.out.println("The graph has an edge between "+ v1 + " and " + v2 + ".");
-	            return true;
-	        }
-	        else {
-	            System.out.println("The graph has no edge between "+ v1 + " and " + v2 + ".");
-	        }
-	        return false;
-	    }
-	 public String toString()
-	    {
-	        StringBuilder builder = new StringBuilder();
-	  
-	        for (T v : map.keySet()) {
-	            builder.append(v.toString() + ": ");
-	            for (T w : map.get(v)) {
-	                builder.append(w.toString() + " ");
-	            }
-	            builder.append("\n");
-	        }
-	  
-	        return (builder.toString());
-	    }
-	 
-	
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
+public class Graph {
+
+    /**
+     * Stores a list of nodes in this Graph.
+     */
+    protected ArrayList<String> nodes = new ArrayList<String>();
+
+    /**
+     * Creates a mapping from a node to its neighbors.
+     */
+    protected Map<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+
+    /**
+     * Constructs a graph.
+     */
+    public Graph() {
+    }
+
+    /**
+     * Adds an edge between two nodes.
+     *
+     * @param source      the source node.
+     * @param destination the destination node, to be connected from source.
+     */
+    public void addEdge(String source, String destination) {
+        // Adds a new path.
+        if (!map.containsKey(source)) {
+            /*
+            Stores a list of neighbors for vertex.
+            */
+            ArrayList<String> Neighbors = new ArrayList<String>();
+            Neighbors.add(destination);
+            map.put(source, Neighbors);
+        } else {
+            // Updates a path.
+            ArrayList<String> oldList = map.get(source);
+
+            int index = 0;
+            while ((index != oldList.size()) && (!oldList.get(index).equals(destination))) {
+                index++;
+            }
+            // If the destination is not already in the path, then
+            // add it to the path.
+            if (index == oldList.size()) {
+                oldList.add(destination);
+                map.put(source, oldList);
+            }
+        }
+        storeNodes(source, destination);
+    }
+
+    /**
+     * @param source
+     * @param destination
+     * Stores the nodes in this Graph.
+     */
+    private void storeNodes(String source, String destination) {
+        if (!source.equals(destination)) {
+            if (!nodes.contains(destination)) {
+                nodes.add(destination);
+            }
+        }
+        if (!nodes.contains(source)) {
+            nodes.add(source);
+        }
+    }
+
+    /**
+     * Returns the NeighborsList for this node.
+     *
+     * @param node the node where its neighbors will be searched for. Requires:
+     *             node must be present in this Graph and not null.
+     * @return the NeighborsList for this node.
+     */
+    public ArrayList<String> getNeighbors(String node) {
+        ArrayList<String> NeighborsList;
+        Set<String> keys = map.keySet();
+        for (String key : keys) {
+            if (key.equals(node)) {
+                NeighborsList = map.get(key);
+                return new ArrayList<String>(NeighborsList);
+            }
+        }
+        return new ArrayList<String>();
+    }
+
+    /**
+     * Checks if the node is in this Graph.
+     *
+     * @return true if the node is in this Graph.
+     */
+    public boolean memberOf(String node) {
+        return nodes.contains(node);
+    }
+
+    /**
+     * Returns a string representation of this Graph, in
+     * the form: node => [node 1, node 2, ... , node n], which means
+     * that there is a path from node to node 1, node 2, ... , node n.
+     *
+     * @return a string representation of this Graph.
+     */
+    public String toString() {
+        int counter = 0;
+        String string = "";
+        Set<String> keys = map.keySet();
+        for (String key : keys) {
+            if (counter == 0) {
+                string = string + key + "--->" + map.get(key).toString();
+            } else {
+                string = string + "\n" + key + "--->" + map.get(key).toString();
+            }
+            counter++;
+        }
+        return string;
+    }
 }
