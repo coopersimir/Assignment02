@@ -1,13 +1,17 @@
+/**
+ * @author Simir Cooper 
+ * @since 5/17/21
+ * The shortest path program extends the 
+ */
 package Graph_Resources;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
+import java.util.*;
 
 public class ShortestPath extends Graph {
 
     /**
      * The shortest path between two nodes in a graph.
      */
-    protected static ArrayList<String> shortestPath = new ArrayList<String>();
+    protected static LinkedList<String> shortestPath = new LinkedList<String>();
 
     /**
      * Finds the shortest path between two nodes (source and destination) in a graph.
@@ -21,12 +25,12 @@ public class ShortestPath extends Graph {
      * Requires: source != null, destination != null and must have a name (e.g.
      * cannot be an empty string).
      */
-    public static ArrayList<String> breadthFirstSearch(Graph graph, String source,
+    public static LinkedList<String> breadthFirstSearch(Graph graph, String source,
                                                        String destination) {
         shortestPath.clear();
 
         // A list that stores the path.
-        ArrayList<String> path = new ArrayList<String>();
+        LinkedList<String> path = new LinkedList<String>();
 
         // If the source is the same as destination, I'm done.
         if (source.equals(destination) && graph.memberOf(source)) {
@@ -43,9 +47,9 @@ public class ShortestPath extends Graph {
         queue.offer(source);
         while (!queue.isEmpty()) {
             String vertex = queue.poll();
-            visited.offer(vertex);
+            visited.offer(vertex); //store the visited vertex
 
-            ArrayList<String> neighborList = graph.getNeighbors(vertex);
+            LinkedList<String> neighborList = graph.getNeighbors(vertex);
             int index = 0;
             int neighborSize = neighborList.size();
             while (index != neighborSize) {
@@ -75,8 +79,8 @@ public class ShortestPath extends Graph {
      * @param path        The path that has nodes and their neighbor.
      * @return The shortest path.
      */
-    private static ArrayList<String> processPath(String src, String destination,
-                                                 ArrayList<String> path) {
+    private static LinkedList<String> processPath(String src, String destination,
+                                                 LinkedList<String> path) {
 
         // Finds out where the destination node directly comes from.
         int index = path.indexOf(destination);
@@ -95,5 +99,13 @@ public class ShortestPath extends Graph {
             // We then set the source node to be the destination node.
             return processPath(src, source, path);
         }
+    }
+    public String printlist() {
+    	String result = "";
+    	for(int i = 0; i < shortestPath.size(); i++) {
+    		result+= shortestPath.get(i)+ "--> ";
+    	}
+    	return result;
+           
     }
 }
