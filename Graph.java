@@ -1,65 +1,55 @@
-
+/**
+ * @author Simir Cooper 
+ * @since 5/17/21
+ * This is a graph implementation that constructs the connections of each of the movie stars present in our text file.
+ */
 package Graph_Resources;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Graph {
 
     /**
-     * Stores a list of nodes in this Graph.
+     * Stores a list of vertices in this Graph.
      */
-    protected ArrayList<String> nodes = new ArrayList<String>();
+    protected LinkedList<String> nodes = new LinkedList<String>();
 
     /**
      * Creates a mapping from a node to its neighbors.
      */
-    protected Map<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+    protected Map<String, LinkedList<String>> map = new HashMap<String, LinkedList<String>>();
 
     /**
-     * Constructs a graph.
+     * Add vertex 
+     * @param source
      */
-    public Graph() {
+    public void addVertex(String source)
+    {
+        map.put(source, new LinkedList<String>());
     }
 
     /**
-     * Adds an edge between two nodes.
-     *
-     * @param source      the source node.
-     * @param destination the destination node, to be connected from source.
+     * Adds a bidirectional edge between two nodes.
+     * @param source      the source vertex.
+     * @param destination the destination vertex, to be connected from source.
      */
     public void addEdge(String source, String destination) {
         // Adds a new path.
         if (!map.containsKey(source)) {
-            /*
-            Stores a list of neighbors for vertex.
-            */
-            ArrayList<String> Neighbors = new ArrayList<String>();
-            Neighbors.add(destination);
-            map.put(source, Neighbors);
-        } else {
-            // Updates a path.
-            ArrayList<String> oldList = map.get(source);
-
-            int index = 0;
-            while ((index != oldList.size()) && (!oldList.get(index).equals(destination))) {
-                index++;
-            }
-            // If the destination is not already in the path, then
-            // add it to the path.
-            if (index == oldList.size()) {
-                oldList.add(destination);
-                map.put(source, oldList);
-            }
+        	 addVertex(source);
+        } 
+        if (!map.containsKey(destination)) {
+        	 addVertex(destination);
         }
-        storeNodes(source, destination);
+        map.get(source).add(destination); //add edge from source to destination
+        map.get(destination).add(source); //add edge from destination to source
+        
+        storeNodes(source, destination); //store the nodes in the linkedlist
     }
 
     /**
      * @param source
      * @param destination
-     * Stores the nodes in this Graph.
+     * Stores the vertices in this Graph.
      */
     private void storeNodes(String source, String destination) {
         if (!source.equals(destination)) {
@@ -73,52 +63,48 @@ public class Graph {
     }
 
     /**
-     * Returns the NeighborsList for this node.
-     *
+     * Returns the Neighboring Vertices for a source vertex.
      * @param node the node where its neighbors will be searched for. Requires:
      *             node must be present in this Graph and not null.
      * @return the NeighborsList for this node.
      */
-    public ArrayList<String> getNeighbors(String node) {
-        ArrayList<String> NeighborsList;
+    public LinkedList<String> getNeighbors(String node) {
+        LinkedList<String> NeighborsList;
         Set<String> keys = map.keySet();
         for (String key : keys) {
             if (key.equals(node)) {
                 NeighborsList = map.get(key);
-                return new ArrayList<String>(NeighborsList);
+                return new LinkedList<String>(NeighborsList);
             }
         }
-        return new ArrayList<String>();
+        return new LinkedList<String>();
     }
 
     /**
-     * Checks if the node is in this Graph.
-     *
-     * @return true if the node is in this Graph.
+     * Checks if the vertex is in this Graph.
+     * @return true if the vertex is in this Graph.
      */
     public boolean memberOf(String node) {
         return nodes.contains(node);
     }
 
     /**
-     * Returns a string representation of this Graph, in
-     * the form: node => [node 1, node 2, ... , node n], which means
-     * that there is a path from node to node 1, node 2, ... , node n.
-     *
+     * Returns a string representation of this Graph
      * @return a string representation of this Graph.
      */
-    public String toString() {
-        int counter = 0;
-        String string = "";
-        Set<String> keys = map.keySet();
-        for (String key : keys) {
-            if (counter == 0) {
-                string = string + key + "--->" + map.get(key).toString();
-            } else {
-                string = string + "\n" + key + "--->" + map.get(key).toString();
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder();
+  
+        for (String v : map.keySet()) {
+            builder.append(v.toString() + ": ");
+            for (String w : map.get(v)) {
+                builder.append(w.toString() + " ");
             }
-            counter++;
+            builder.append("\n");
         }
-        return string;
+  
+        return (builder.toString());
     }
 }
+
